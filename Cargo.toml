@@ -4,6 +4,6 @@ version = "0.1.0"
 authors = ["Kesara Rathnayake <kesara@fq.nz>"]
 
 [dependencies.sdl2]
-version = "0.30"
+version = "0.32"
 default-features = false
-features = ["ttf"]
+features = ["ttf", "mixer"]
