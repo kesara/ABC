@@ -14,6 +14,10 @@ const ASSETS_DIR: &'static str = "assets";
 // default font file
 const DEFAULT_FONT: &str = "knewave.ttf";
 
+// const
+const YENULI: &str = "YENULI";
+const YELINSA: &str = "YELINSA";
+
 fn get_asset(file: String) -> String {
     format!("{}/{}", ASSETS_DIR, file)
 }
@@ -33,6 +37,10 @@ impl Letter {
 
     fn letter(&self) -> String {
         self.letter.to_string()
+    }
+
+    fn is_special(&self) -> bool {
+        YENULI.contains(self.letter) || YELINSA.contains(self.letter)
     }
 
     fn get_sound_path(&self) -> String {
@@ -96,6 +104,7 @@ fn main() {
 
     // letter
     let mut l: Letter = Letter::new(' ');
+    let mut buildup: String = "".to_string();
 
     log::log("Starting ABC");
     let mut main_loop = || {
@@ -131,20 +140,66 @@ fn main() {
                 Event::KeyDown { keycode: Some(Keycode::H), .. } => {
                     l = Letter::new('H');
                 }
+                Event::KeyDown { keycode: Some(Keycode::I), .. } => {
+                    l = Letter::new('I');
+                }
                 Event::KeyDown { keycode: Some(Keycode::J), .. } => {
                     l = Letter::new('J');
                 }
                 Event::KeyDown { keycode: Some(Keycode::K), .. } => {
                     l = Letter::new('K');
                 }
+                Event::KeyDown { keycode: Some(Keycode::L), .. } => {
+                    l = Letter::new('L');
+                }
+                Event::KeyDown { keycode: Some(Keycode::M), .. } => {
+                    l = Letter::new('M');
+                }
+                Event::KeyDown { keycode: Some(Keycode::N), .. } => {
+                    l = Letter::new('N');
+                }
+                Event::KeyDown { keycode: Some(Keycode::O), .. } => {
+                    l = Letter::new('O');
+                }
+                Event::KeyDown { keycode: Some(Keycode::P), .. } => {
+                    l = Letter::new('P');
+                }
+                Event::KeyDown { keycode: Some(Keycode::Q), .. } => {
+                    l = Letter::new('Q');
+                }
+                Event::KeyDown { keycode: Some(Keycode::R), .. } => {
+                    l = Letter::new('R');
+                }
+                Event::KeyDown { keycode: Some(Keycode::S), .. } => {
+                    l = Letter::new('S');
+                }
+                Event::KeyDown { keycode: Some(Keycode::T), .. } => {
+                    l = Letter::new('T');
+                }
+                Event::KeyDown { keycode: Some(Keycode::U), .. } => {
+                    l = Letter::new('U');
+                }
+                Event::KeyDown { keycode: Some(Keycode::V), .. } => {
+                    l = Letter::new('V');
+                }
+                Event::KeyDown { keycode: Some(Keycode::W), .. } => {
+                    l = Letter::new('W');
+                }
+                Event::KeyDown { keycode: Some(Keycode::X), .. } => {
+                    l = Letter::new('X');
+                }
                 Event::KeyDown { keycode: Some(Keycode::Y), .. } => {
                     l = Letter::new('Y');
+                }
+                Event::KeyDown { keycode: Some(Keycode::Z), .. } => {
+                    l = Letter::new('Z');
                 }
                 _ => {
                     // pass
                 }
             };
         }
+
         // draw main window
         let _ = renderer.set_draw_color(black);
         let _ = renderer.clear();
@@ -171,6 +226,34 @@ fn main() {
                 let _ = sdl2::mixer::Channel::all().play(&sound, 0);
                 l.played = true;
                 timer.delay(500);
+
+                if l.is_special() {
+                    if buildup.is_empty() &&
+                        (YENULI.starts_with(l.letter) ||
+                             YELINSA.starts_with(l.letter))
+                    {
+                        buildup = l.letter.to_string();
+
+                    } else {
+                        buildup = format!("{}{}", buildup, l.letter);
+                        if YENULI.eq(&buildup) || YELINSA.eq(&buildup) {
+                            log::log(&format!("Play {}", buildup));
+                            let sound_file =
+                                format!("{}.ogg", buildup.to_lowercase());
+                            let path = get_asset(sound_file);
+                            let sound = Chunk::from_file(Path::new(&path))
+                                .unwrap();
+                            let _ = sdl2::mixer::Channel::all().play(&sound, 0);
+                            buildup = "".to_string();
+                            timer.delay(1100);
+                        }
+                        if !(YENULI.starts_with(&buildup) ||
+                                 YELINSA.starts_with(&buildup))
+                        {
+                            buildup = "".to_string();
+                        }
+                    }
+                }
             }
         }
     };
