@@ -17,6 +17,7 @@ const DEFAULT_FONT: &str = "knewave.ttf";
 // const
 const YENULI: &str = "YENULI";
 const YELINSA: &str = "YELINSA";
+const YESARA: &str = "YESARA";
 
 fn get_asset(file: String) -> String {
     format!("{}/{}", ASSETS_DIR, file)
@@ -40,7 +41,8 @@ impl Letter {
     }
 
     fn is_special(&self) -> bool {
-        YENULI.contains(self.letter) || YELINSA.contains(self.letter)
+        YENULI.contains(self.letter) || YELINSA.contains(self.letter) ||
+            YESARA.contains(self.letter)
     }
 
     fn get_sound_path(&self) -> String {
@@ -230,13 +232,17 @@ fn main() {
                 if l.is_special() {
                     if buildup.is_empty() &&
                         (YENULI.starts_with(l.letter) ||
-                             YELINSA.starts_with(l.letter))
+                             YELINSA.starts_with(l.letter) ||
+                             YESARA.starts_with(l.letter))
                     {
                         buildup = l.letter.to_string();
 
                     } else {
                         buildup = format!("{}{}", buildup, l.letter);
-                        if YENULI.eq(&buildup) || YELINSA.eq(&buildup) {
+                        if YENULI.eq(&buildup) ||
+                            YELINSA.eq(&buildup) ||
+                            YESARA.eq(&buildup)
+                        {
                             log::log(&format!("Play {}", buildup));
                             let sound_file =
                                 format!("{}.ogg", buildup.to_lowercase());
@@ -248,7 +254,8 @@ fn main() {
                             timer.delay(1100);
                         }
                         if !(YENULI.starts_with(&buildup) ||
-                                 YELINSA.starts_with(&buildup))
+                                 YELINSA.starts_with(&buildup) ||
+                                 YESARA.starts_with(&buildup))
                         {
                             buildup = "".to_string();
                         }
